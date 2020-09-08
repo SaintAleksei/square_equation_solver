@@ -12,7 +12,7 @@
 int solve_linear (double, double, double*); // solves linear equation
 int solve_square (double, double, double, double*, double*); // solves square equation
 int comparsion (double, double); // compares two real numbers excluding infelicity
-int input_double (char, double*); // responsible for entering
+int input_double (char [], double*); // responsible for entering
 
 //-----------------------------------------------------------------------------
 
@@ -26,9 +26,9 @@ int main()
             "# Enter coefficients from ax^2 - bx + c = 0:\n"
             "#\n"                                           );
 
-    input_double ('a', &a);
-    input_double ('b', &b);
-    input_double ('c', &c);
+    input_double ("a", &a);
+    input_double ("b", &b);
+    input_double ("c", &c);
 
     printf ("# \n");
 
@@ -89,7 +89,7 @@ int solve_linear (double a, double b, double* root_ad)
 {
     if (comparsion (a, 0) == 0 && comparsion (b, 0) == 0)
         return INFINITE;
-    
+
     if (comparsion (a, 0) == 0 && comparsion (b, 0) != 0)
         return 0;
 
@@ -131,9 +131,16 @@ int solve_square (double a, double b, double c, double* root1_ad, double* root2_
 
 //-----------------------------------------------------------------------------
 
-int input_double (char name, double* value)
+/*
+    This function is responsible for the correctness of double data entry
+    Input parameters: char name[] - the name of the entered number
+    Output parameters: double* value - memory address to which data will be saved
+    Return: 0 - everything is good
+*/
+
+int input_double (char name[], double* value)
 {
-    printf ("# %c = ", name);
+    printf ("# %s = ", name);
 
     if (!scanf ("%lg", value))
     {
