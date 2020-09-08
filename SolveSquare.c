@@ -101,7 +101,7 @@ int solve_linear (double a, double b, double* root_ad)
 //-----------------------------------------------------------------------------
 
 /*
-    This function solves linear equation of the form ax^2 + bx + c = 0
+    This function solves square equation of the form ax^2 + bx + c = 0
     Input parameters: double a and double b and double c - coefficients of the equation
     Output parameters: double* root1_ad and double* root2_ad - memory addresses  at which the roots of the equation will be written
     Return: number of roots (0, 1, 2) or solve_linear (b, c, root1_ad) (if square equation is reduced to linear)
