@@ -5,33 +5,32 @@
 //-----------------------------------------------------------------------------
 
 #define INFINITE -1
-#define INFELICITY 1E-7
+#define INFELICITY 1E-6
 
 //-----------------------------------------------------------------------------
 
 int solve_linear (double, double, double*); // solves linear equation
 int solve_square (double, double, double, double*, double*); // solves square equation
-int comparsion (double, double); // compares two real numbers excluding infelicity
 int input_double (char [], double*); // responsible for entering
+void normalize (double*, double*, double*); // normalizing of coefficients
+int is_zero (double); // compare real number with zero excluding infelicity
 
 //-----------------------------------------------------------------------------
 
-int main()
+int main ()
 {
-    int r_count = 0;
-    double a = 0, b = 0, c = 0, root1 = 0, root2 = 0;
-
     printf ("# Square equation solver (c) SaintAleksei\n"
             "#\n"
             "# Enter coefficients from ax^2 - bx + c = 0:\n"
             "#\n"                                           );
 
+    double a, b, c;
     input_double ("a", &a);
     input_double ("b", &b);
     input_double ("c", &c);
 
-    printf ("# \n");
-
+    double root1, root2;
+    int r_count;
     r_count = solve_square (a, b, c, &root1, &root2);
 
     switch (r_count)
@@ -57,40 +56,12 @@ int main()
 
 //-----------------------------------------------------------------------------
 
-/*
-    This function compares 2 double numbers taking into account infelicity
-    input parameters: double a and double b - compared numbers
-    Output parameters: -
-    return: 0 means a == b, 1 means a > b, -1 means a < b
-*/
-
-int comparsion (double a, double b)
-{
-    if (fabs (a - b) <= INFELICITY)
-        return 0;
-    if (a > b)
-        return 1;
-    if (a < b)
-        return -1;
-
-    return 0;
-}
-
-//-----------------------------------------------------------------------------
-
-/*
-    This function solves linear equation of the form ax + b = 0
-    Input parameters: double a and double b - coefficients of the equation
-    Output parameters: double* root_ad - memory address at which the root of the equation will be written
-    Return: number of roots ( 0 or 1 or INFINITE = -1, that means infinite number of roots)
-*/
-
 int solve_linear (double a, double b, double* root_ad)
 {
-    if (comparsion (a, 0) == 0 && comparsion (b, 0) == 0)
+    if (is_zero (a) && is_zero (b))
         return INFINITE;
 
-    if (comparsion (a, 0) == 0 && comparsion (b, 0) != 0)
+    if (is_zero (a) && !is_zero (b))
         return 0;
 
     *root_ad = -b / a;
@@ -100,28 +71,22 @@ int solve_linear (double a, double b, double* root_ad)
 
 //-----------------------------------------------------------------------------
 
-/*
-    This function solves square equation of the form ax^2 + bx + c = 0
-    Input parameters: double a and double b and double c - coefficients of the equation
-    Output parameters: double* root1_ad and double* root2_ad - memory addresses  at which the roots of the equation will be written
-    Return: number of roots (0, 1, 2) or solve_linear (b, c, root1_ad) (if square equation is reduced to linear)
-*/
-
 int solve_square (double a, double b, double c, double* root1_ad, double* root2_ad)
 {
-    if (comparsion (a, 0) == 0)
+    if (is_zero (a))
         return solve_linear (b, c, root1_ad);
 
-    double discr = b * b - 4 * a * c;
+    double discr = (b * b) - (4 * a * c);
 
-    if (comparsion (discr, 0) == -1)
-        return 0;
-    if (comparsion (discr, 0) == 0)
+    if (is_zero (discr))
     {
         *root1_ad = -b / (2 * a);
 
         return 1;
     }
+
+    if (discr < 0)
+        return 0;
 
     *root1_ad = (-b + sqrt (discr) / (2 * a));
     *root2_ad = (-b - sqrt (discr) / (2 * a));
@@ -131,13 +96,6 @@ int solve_square (double a, double b, double c, double* root1_ad, double* root2_
 
 //-----------------------------------------------------------------------------
 
-/*
-    This function is responsible for the correctness of double data entry
-    Input parameters: char name[] - the name of the entered number
-    Output parameters: double* value - memory address to which data will be saved
-    Return: 0 - everything is good
-*/
-
 int input_double (char name[], double* value)
 {
     printf ("# %s = ", name);
@@ -146,13 +104,44 @@ int input_double (char name[], double* value)
     {
         printf ("# Invalid input: enter a real numbers:\n");
 
-        char line[1000];
-        fgets (line, 1000, stdin);
+        fflush (stdin);
 
         return input_double (name, value);
     }
 
     return 0;
+}
+
+//-----------------------------------------------------------------------------
+
+void normalize (double* a, double* b, double* c)
+{
+    double x, y;
+    x = *b / *a;
+    y = *c / *a;
+
+    if (isfinite (x) && isfinite (y))
+        {
+            *b = *b / *a;
+            *c = *c / *a;
+            *a = 1;
+            return;
+        }
+
+    x = *c / *b;
+
+    if (isfinite (x))
+        {
+            *c = *c / *b;
+            *b = 1;
+        }
+}
+
+//-----------------------------------------------------------------------------
+
+int is_zero (double a)
+{
+    return fabs (a - 0) <= INFELICITY ? 1 : 0;
 }
 
 
